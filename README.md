@@ -1,4 +1,4 @@
-# Eclipse project for SquareLine Studio and LVGL
+# Consignes LVGL
 
 This project can be used to build and run C/C++ UI code exported from SquareLine Studio.
 
