@@ -62,7 +62,7 @@ static void ui_event_QuitProgramScreen1(lv_event_t * e)
     lv_event_code_t event = lv_event_get_code(e);
     lv_obj_t * ta = lv_event_get_target(e);
     if(event == LV_EVENT_CLICKED) {
-        (e);
+        quitProgram(e);
     }
 }
 static void ui_event_installGameScreen1(lv_event_t * e)
@@ -84,6 +84,9 @@ static void ui_event_startGameScreen2(lv_event_t * e)
     lv_obj_t * ta = lv_event_get_target(e);
     if(event == LV_EVENT_CLICKED) {
         _ui_screen_change(ui_Screen3, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0);
+    }
+    if(event == LV_EVENT_CLICKED) {
+        startGame(e);
     }
 }
 static void ui_event_quitGameScreen3(lv_event_t * e)
