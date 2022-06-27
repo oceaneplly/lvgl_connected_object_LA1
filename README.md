@@ -1,24 +1,12 @@
 # Consignes LVGL
 
-This project can be used to build and run C/C++ UI code exported from SquareLine Studio.
+Ce projet a été fait avec SquareLine Studio (pour la partie GUI) et peut-être exporté en C/C++. 
 
-## Get started
-- Install a compiler and related tools if you don't have them yet:
-  - On Windows [MinGW](https://www.mingw-w64.org/) can be a good choice
-  - On Linux type in the Terminal: `sudo apt-get install gcc g++ gdb build-essential`
-- Install SDL (required to simulate a display)
-  - On Windows see for example [this guide](https://www.caveofprogramming.com/c-for-complete-beginners/setting-up-sdl-windows.html)
-  - On Linux `sudo apt-get install libsdl2-dev`
-- Download and Install Eclipse CDT from [http://www.eclipse.org/cdt/](http://www.eclipse.org/cdt/)
-
-## Add the UI files
-In SquareLine Studio click `Export->Export Files` and select the `ui` folder of this project
-
-## Open and build the project
-- Start Eclipse
-- Select the parent folder of the exported project as "Workspace"
-- Select `File->Import->General->Exisiting project into Workspace` click "Next" and browse the project
-- Build the project with `Project->Build`
-- Run the project with `Run->Run`.
-
-
+## Pour commencer 
+- Télécharger la version n°2 du projet : `git clone --single-branch --branch version2 https://github.com/oceaneplly/lvgl_connected_object_LA1.git`;
+- Aller dans le dossier lvgl_connected_object_LA1 qui vient d'être crée : `cd lvgl_connected_object_LA1`;
+- Créer un dossier build : `mkdir build`;
+- Se mettre dans le dossier build : `cd build`;
+- Exécuter la commande `cmake ..` pour avoir un fichier Makefile adapté à votre système embarqué;
+- Pour avoir le fichier final (`display`), il faut taper la commande `make -j4`;
+- Le fichier `display` se trouve dans le dossier `/bin`, pour l'exécuter il faut lancer la commande `./display`.
