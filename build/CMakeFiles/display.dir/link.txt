@@ -1,0 +1,1 @@
+/usr/bin/cc    CMakeFiles/display.dir/display.c.o CMakeFiles/display.dir/ui/ui.c.o CMakeFiles/display.dir/ui/ui_helpers.c.o CMakeFiles/display.dir/ui/ui_img_1760572067.c.o CMakeFiles/display.dir/ui/ui_events.c.o  -o bin/display  lib/liblvgl.a lvgl/liblvgl_examples.a lvgl/liblvgl_demos.a lib/liblv_drivers.a -lpthread -lSDL2 lib/liblvgl.a 

@@ -1,125 +1,183 @@
 // SquareLine LVGL GENERATED FILE
 // EDITOR VERSION: SquareLine Studio 1.0.5
-// LVGL VERSION: 8.2
+// LVGL VERSION: 8.2test_lvgl
 // PROJECT: test_lvgl
 
 #include "ui.h"
 #include "ui_helpers.h"
+#include <pthread.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <sys/shm.h>
+#include <unistd.h>
+
+#define INFORMATIONS "informations"
+#define POSITION "position"
+#define SCORE "score"
 
 ///////////////////// VARIABLES ////////////////////
-lv_obj_t * ui_Screen1;
-lv_obj_t * ui_configPartyScreen1;
-lv_obj_t * ui_textConfigScreen1;
-lv_obj_t * ui_QuitProgramScreen1;
-lv_obj_t * ui_textQuitScreen1;
-lv_obj_t * ui_allGamesOnUrBoardImg;
-lv_obj_t * ui_installGameScreen1;
-lv_obj_t * ui_textInstallScreen1;
-lv_obj_t * ui_Screen2;
-lv_obj_t * ui_startGameScreen2;
-lv_obj_t * ui_textStartGameScreen2;
-lv_obj_t * ui_choiceGameDropScreen2;
-lv_obj_t * ui_textNbJoueursScreen2;
-lv_obj_t * ui_nbJoueursRollerScreen2;
-lv_obj_t * ui_Screen3;
-lv_obj_t * ui_partyScreen3;
-lv_obj_t * ui_getPositionPieceScreen3;
-lv_obj_t * ui_quitGameScreen3;
-lv_obj_t * ui_textQuitPartyScreen3;
-lv_obj_t * ui_Screen4;
-lv_obj_t * ui_textQuitPartyScreen4;
-lv_obj_t * ui_buttonMenuScreen4;
-lv_obj_t * ui_textMenuScreen4;
-lv_obj_t * ui_buttonGoGameScreen4;
-lv_obj_t * ui_textPartyScreen4;
+lv_obj_t *ui_Screen1;
+lv_obj_t *ui_configPartyScreen1;
+lv_obj_t *ui_textConfigScreen1;
+lv_obj_t *ui_QuitProgramScreen1;
+lv_obj_t *ui_textQuitScreen1;
+lv_obj_t *ui_allGamesOnUrBoardImg;
+lv_obj_t *ui_installGameScreen1;
+lv_obj_t *ui_textInstallScreen1;
+lv_obj_t *ui_Screen2;
+lv_obj_t *ui_startGameScreen2;
+lv_obj_t *ui_textStartGameScreen2;
+lv_obj_t *ui_choiceGameDropScreen2;
+lv_obj_t *ui_textNbJoueursScreen2;
+lv_obj_t *ui_nbJoueursRollerScreen2;
+lv_obj_t *ui_Screen3;
+lv_obj_t *ui_partyScreen3;
+lv_obj_t *ui_getPositionPieceScreen3;
+lv_obj_t *ui_quitGameScreen3;
+lv_obj_t *ui_textQuitPartyScreen3;
+lv_obj_t *ui_Screen4;
+lv_obj_t *ui_textQuitPartyScreen4;
+lv_obj_t *ui_buttonMenuScreen4;
+lv_obj_t *ui_textMenuScreen4;
+lv_obj_t *ui_buttonGoGameScreen4;
+lv_obj_t *ui_textPartyScreen4;
+char *nbPlayersString[];
+char *nameGame[];
+int affichage;
+int partie = 0;
+int shmid;
+key_t cleSegment;
+const mode_t FIFO_MODE = 0760;
+int ret;
+struct sigaction newact;
+
+char *segmentLecture;
+char pidServeur[15]; // pid récupéré dans la mémoire partagée
+char delimString[30];
+pid_t pid;
+intmax_t xmax;
+char *tmp1;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 32
-    #error "LV_COLOR_DEPTH should be 32bit to match SquareLine Studio's settings"
+#error "LV_COLOR_DEPTH should be 32bit to match SquareLine Studio's settings"
 #endif
-#if LV_COLOR_16_SWAP !=0
-    #error "#error LV_COLOR_16_SWAP should be 0 to match SquareLine Studio's settings"
+#if LV_COLOR_16_SWAP != 0
+#error "#error LV_COLOR_16_SWAP should be 0 to match SquareLine Studio's settings"
 #endif
 
 ///////////////////// ANIMATIONS ////////////////////
 
 ///////////////////// FUNCTIONS ////////////////////
-static void ui_event_Screen1(lv_event_t * e)
+void *retval;
+char *infoPartie[];
+char *lecture[];
+
+static void startGame()
 {
-    lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
+    if (strlen(nameGame) != 0 && strlen(nbPlayersString) != 0 && affichage == 1)
+    {
+        int info;
+        info = open(INFORMATIONS, O_WRONLY | O_NONBLOCK);
+        strcat(nameGame, nbPlayersString);
+        write(info, nameGame, 100);
+        affichage = 0;
+    }
+    kill(pid, 10);
 }
-static void ui_event_configPartyScreen1(lv_event_t * e)
+
+static void ui_event_Screen1(lv_event_t *e)
 {
     lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
-    if(event == LV_EVENT_CLICKED) {
+    lv_obj_t *ta = lv_event_get_target(e);
+}
+static void ui_event_configPartyScreen1(lv_event_t *e)
+{
+    lv_event_code_t event = lv_event_get_code(e);
+    lv_obj_t *ta = lv_event_get_target(e);
+    if (event == LV_EVENT_CLICKED)
+    {
         _ui_screen_change(ui_Screen2, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0);
     }
 }
-static void ui_event_QuitProgramScreen1(lv_event_t * e)
+static void ui_event_QuitProgramScreen1(lv_event_t *e)
 {
     lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
-    if(event == LV_EVENT_CLICKED) {
+    lv_obj_t *ta = lv_event_get_target(e);
+    if (event == LV_EVENT_CLICKED)
+    {
+        kill(pid, 12);
         quitProgram(e);
     }
 }
-static void ui_event_installGameScreen1(lv_event_t * e)
+static void ui_event_installGameScreen1(lv_event_t *e)
 {
     lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
-    if(event == LV_EVENT_CLICKED) {
+    lv_obj_t *ta = lv_event_get_target(e);
+    if (event == LV_EVENT_CLICKED)
+    {
         _ui_screen_change(ui_Screen1, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0);
     }
 }
-static void ui_event_Screen2(lv_event_t * e)
+static void ui_event_Screen2(lv_event_t *e)
 {
     lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
+    lv_obj_t *ta = lv_event_get_target(e);
 }
-static void ui_event_startGameScreen2(lv_event_t * e)
+static void ui_event_startGameScreen2(lv_event_t *e)
 {
     lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
-    if(event == LV_EVENT_CLICKED) {
+    lv_obj_t *ta = lv_event_get_target(e);
+    if (event == LV_EVENT_CLICKED)
+    {
+        lv_dropdown_get_selected_str(ui_choiceGameDropScreen2, nameGame, 0);       // récupération nom du jeu
+        lv_roller_get_selected_str(ui_nbJoueursRollerScreen2, nbPlayersString, 0); // récupération nombre joueurs
         _ui_screen_change(ui_Screen3, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0);
-    }
-    if(event == LV_EVENT_CLICKED) {
-        startGame(e);
+        affichage = 1;
+        startGame();
     }
 }
-static void ui_event_quitGameScreen3(lv_event_t * e)
+static void ui_event_quitGameScreen3(lv_event_t *e)
 {
     lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
-    if(event == LV_EVENT_CLICKED) {
+    lv_obj_t *ta = lv_event_get_target(e);
+    if (event == LV_EVENT_CLICKED)
+    {
         _ui_screen_change(ui_Screen4, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0);
     }
 }
-static void ui_event_buttonMenuScreen4(lv_event_t * e)
+static void ui_event_buttonMenuScreen4(lv_event_t *e)
 {
     lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
-    if(event == LV_EVENT_CLICKED) {
+    lv_obj_t *ta = lv_event_get_target(e);
+    if (event == LV_EVENT_CLICKED)
+    {
         _ui_screen_change(ui_Screen1, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0);
         _ui_screen_change(ui_Screen1, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0);
     }
 }
-static void ui_event_textMenuScreen4(lv_event_t * e)
+static void ui_event_textMenuScreen4(lv_event_t *e)
 {
     lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
-    if(event == LV_EVENT_CLICKED) {
+    lv_obj_t *ta = lv_event_get_target(e);
+    if (event == LV_EVENT_CLICKED)
+    {
         _ui_screen_change(ui_Screen1, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0);
         _ui_screen_change(ui_Screen1, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0);
     }
 }
-static void ui_event_buttonGoGameScreen4(lv_event_t * e)
+static void ui_event_buttonGoGameScreen4(lv_event_t *e)
 {
     lv_event_code_t event = lv_event_get_code(e);
-    lv_obj_t * ta = lv_event_get_target(e);
-    if(event == LV_EVENT_CLICKED) {
+    lv_obj_t *ta = lv_event_get_target(e);
+    if (event == LV_EVENT_CLICKED)
+    {
         _ui_screen_change(ui_Screen3, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0);
     }
 }
@@ -256,7 +314,6 @@ void ui_Screen1_screen_init(void)
     lv_label_set_text(ui_textInstallScreen1, "Installer un jeu");
 
     lv_obj_set_style_text_font(ui_textInstallScreen1, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
-
 }
 void ui_Screen2_screen_init(void)
 {
@@ -344,7 +401,6 @@ void ui_Screen2_screen_init(void)
     lv_obj_set_y(ui_nbJoueursRollerScreen2, -85);
 
     lv_obj_set_align(ui_nbJoueursRollerScreen2, LV_ALIGN_CENTER);
-
 }
 void ui_Screen3_screen_init(void)
 {
@@ -383,14 +439,15 @@ void ui_Screen3_screen_init(void)
 
     lv_obj_set_align(ui_getPositionPieceScreen3, LV_ALIGN_CENTER);
 
-    if("" == "") lv_textarea_set_accepted_chars(ui_getPositionPieceScreen3, NULL);
-    else lv_textarea_set_accepted_chars(ui_getPositionPieceScreen3, "");
+    if ("" == "")
+        lv_textarea_set_accepted_chars(ui_getPositionPieceScreen3, NULL);
+    else
+        lv_textarea_set_accepted_chars(ui_getPositionPieceScreen3, "");
 
     lv_textarea_set_text(ui_getPositionPieceScreen3, "");
     lv_textarea_set_placeholder_text(ui_getPositionPieceScreen3, "Affichage de la position de la piece");
 
     lv_obj_set_style_text_font(ui_getPositionPieceScreen3, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
-
     // ui_quitGameScreen3
 
     ui_quitGameScreen3 = lv_btn_create(ui_Screen3);
@@ -421,7 +478,6 @@ void ui_Screen3_screen_init(void)
     lv_obj_set_align(ui_textQuitPartyScreen3, LV_ALIGN_CENTER);
 
     lv_label_set_text(ui_textQuitPartyScreen3, "Quitter la partie");
-
 }
 void ui_Screen4_screen_init(void)
 {
@@ -512,19 +568,54 @@ void ui_Screen4_screen_init(void)
     lv_obj_set_align(ui_textPartyScreen4, LV_ALIGN_CENTER);
 
     lv_label_set_text(ui_textPartyScreen4, "Non, revenir\n  a la partie");
-
 }
 
 void ui_init(void)
 {
-    lv_disp_t * dispp = lv_disp_get_default();
-    lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
-                                               false, LV_FONT_DEFAULT);
+    lv_disp_t *dispp = lv_disp_get_default();
+    lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
+                                              false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
     ui_Screen1_screen_init();
     ui_Screen2_screen_init();
     ui_Screen3_screen_init();
     ui_Screen4_screen_init();
     lv_disp_load_scr(ui_Screen1);
-}
+    int info;
+    int ret;
 
+    cleSegment = 2014;
+
+    // création d'un segment de lecture
+    shmid = shmget(cleSegment, 100 * sizeof(char), 0666);
+    if (shmid == -1)
+    {
+        // vérification si la création du segment s'est bien déroulée
+        printf("Connexion échouée : aucun serveur en ligne actuellement \n");
+        exit(1);
+    }
+
+    segmentLecture = shmat(shmid, NULL, 0);
+
+    // récupération PID
+    strcpy(delimString, segmentLecture);
+    strcpy(pidServeur, strtok(delimString, "\n"));
+
+    if (ret == -1)
+    {
+        perror("Erreur de détachement de la mémoire partagée - lecture \n");
+        exit(-1);
+    }
+
+    xmax = strtoimax(pidServeur, &tmp1, 10);
+    pid = (pid_t)xmax;
+
+    printf("pid : %s \n", pidServeur);
+
+    while (1)
+    {
+        lv_task_handler();
+        usleep(5 * 1000);
+    }
+    return 0;
+}
